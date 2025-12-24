@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Seasonal Animation Test</h1>
+    <p>You should see animated particles on the screen.</p>
+    
+    <script src="./src/index.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('SeasonalAnimation available:', typeof window.SeasonalAnimation);
+            
+            if (window.SeasonalAnimation) {
+                try {
+                    const anim = new window.SeasonalAnimation({
+                        season: 'winter',
+                        quantity: 30
+                    });
+                    anim.start();
+                    console.log('Animation started successfully');
+                } catch (e) {
+                    console.error('Error:', e);
+                    document.body.innerHTML += '<p style="color:red;">Error: ' + e.message + '</p>';
+                }
+            } else {
+                document.body.innerHTML += '<p style="color:red;">SeasonalAnimation not loaded!</p>';
+            }
+        });
+    </script>
+</body>
+</html>
+

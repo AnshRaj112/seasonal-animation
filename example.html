@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seasonal Animation Examples</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .controls h2 {
+            margin-top: 0;
+        }
+        
+        .controls label {
+            display: block;
+            margin: 10px 0 5px 0;
+            font-weight: bold;
+        }
+        
+        .controls input, .controls select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .controls button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+        }
+        
+        .controls button:hover {
+            background: #45a049;
+        }
+        
+        .controls button.stop {
+            background: #f44336;
+        }
+        
+        .controls button.stop:hover {
+            background: #da190b;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 200px 50px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h2>Seasonal Animation Controls</h2>
+        
+        <label for="season">Season:</label>
+        <select id="season">
+            <option value="winter">Winter (Snow)</option>
+            <option value="rainy">Rainy (Rain)</option>
+            <option value="fall">Fall (Leaves)</option>
+        </select>
+        
+        <label for="quantity">Quantity:</label>
+        <input type="range" id="quantity" min="10" max="200" value="50">
+        <span id="quantityValue">50</span>
+        
+        <label for="angle">Angle (degrees):</label>
+        <input type="range" id="angle" min="-45" max="45" value="0">
+        <span id="angleValue">0</span>
+        
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
+        <span id="speedValue">1</span>
+        
+        <label for="color">Color (optional):</label>
+        <input type="color" id="color" value="#FFFFFF">
+        <button onclick="clearColor()">Use Default</button>
+        <small style="display:block; margin-top:5px; color:#666;">Pick a color or click "Use Default" for season default</small>
+        
+        <br><br>
+        <button onclick="startAnimation()">Start Animation</button>
+        <button class="stop" onclick="stopAnimation()">Stop Animation</button>
+        <button class="stop" onclick="destroyAnimation()">Destroy</button>
+    </div>
+    
+    <div class="content">
+        <h1>Seasonal Animation Demo</h1>
+        <p>Use the controls on the left to customize the animation!</p>
+    </div>
+
+    <script src="./src/index.js"></script>
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const SeasonalAnimation = window.SeasonalAnimation;
+            let animation = null;
+            
+            if (!SeasonalAnimation) {
+                console.error('SeasonalAnimation not found. Make sure src/index.js is loaded correctly.');
+                return;
+            }
+            
+            window.startAnimation = function() {
+                try {
+                    if (animation) {
+                        animation.destroy();
+                    }
+                    
+                    const season = document.getElementById('season').value;
+                    const quantity = parseInt(document.getElementById('quantity').value);
+                    const angle = parseInt(document.getElementById('angle').value);
+                    const speed = parseFloat(document.getElementById('speed').value);
+                    const colorInput = document.getElementById('color');
+                    const useCustomColor = colorInput.dataset.useCustom === 'true';
+                    const color = useCustomColor ? colorInput.value : null;
+                    
+                    animation = new SeasonalAnimation({
+                        season: season,
+                        quantity: quantity,
+                        angle: angle,
+                        speed: speed,
+                        color: color
+                    });
+                    
+                    animation.start();
+                    console.log('Animation started:', season, quantity, 'particles');
+                } catch (error) {
+                    console.error('Error starting animation:', error);
+                    alert('Error: ' + error.message);
+                }
+            };
+        
+            window.stopAnimation = function() {
+                if (animation) {
+                    animation.stop();
+                }
+            };
+            
+            window.destroyAnimation = function() {
+                if (animation) {
+                    animation.destroy();
+                    animation = null;
+                }
+            };
+            
+            window.clearColor = function() {
+                const colorInput = document.getElementById('color');
+                colorInput.value = '#000000';
+                colorInput.dataset.useCustom = 'false';
+            };
+            
+            // Track when user manually changes color
+            document.getElementById('color').addEventListener('input', function(e) {
+                e.target.dataset.useCustom = 'true';
+            });
+            
+            // Set default color based on season
+            const setDefaultColor = function(season) {
+                const colorInput = document.getElementById('color');
+                const defaults = {
+                    'winter': '#FFFFFF',
+                    'rainy': '#87CEEB',
+                    'fall': '#FF8C00'
+                };
+                colorInput.value = defaults[season] || '#FFFFFF';
+                colorInput.dataset.useCustom = 'false';
+            };
+            
+            // Set default color based on season when season changes
+            document.getElementById('season').addEventListener('change', function(e) {
+                setDefaultColor(e.target.value);
+            });
+            
+            // Initialize with default color for current season
+            setDefaultColor(document.getElementById('season').value);
+            
+            // Update display values
+            document.getElementById('quantity').addEventListener('input', function(e) {
+                document.getElementById('quantityValue').textContent = e.target.value;
+            });
+            
+            document.getElementById('angle').addEventListener('input', function(e) {
+                document.getElementById('angleValue').textContent = e.target.value;
+            });
+            
+            document.getElementById('speed').addEventListener('input', function(e) {
+                document.getElementById('speedValue').textContent = e.target.value;
+            });
+            
+            // Start with default animation after a short delay to ensure everything is ready
+            setTimeout(function() {
+                window.startAnimation();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+

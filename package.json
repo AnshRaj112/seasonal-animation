@@ -1,0 +1,37 @@
+{
+  "name": "seasonal-animation",
+  "version": "1.0.0",
+  "description": "A customizable npm package for seasonal animations (snow, rain, falling leaves) that covers the entire screen",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnshRaj112/seasonal-animation.git"
+  },
+  "keywords": [
+    "animation",
+    "seasonal",
+    "snow",
+    "rain",
+    "leaves",
+    "fall",
+    "winter",
+    "canvas",
+    "particles",
+    "effects"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnshRaj112/seasonal-animation/issues"
+  },
+  "homepage": "https://github.com/AnshRaj112/seasonal-animation#readme",
+  "files": [
+    "src",
+    "README.md"
+  ]
+}
