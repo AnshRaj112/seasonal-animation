@@ -134,7 +134,7 @@ class SeasonalAnimation {
         swaySpeed: defaults.sway ? (Math.random() * 0.02 + 0.01) : 0,
         swayOffset: Math.random() * Math.PI * 2,
         color: (this.options.color !== null && this.options.color !== undefined) ? this.options.color : defaults.color,
-        shape: defaults.shape
+        shape: defaults.shape // Ensure shape is set from defaults
       };
 
       // For leaves, add some variation
@@ -172,13 +172,14 @@ class SeasonalAnimation {
         this.ctx.rotate(Math.PI / 3);
       }
     } else if (particle.shape === 'line') {
-      // Rain drop
-      this.ctx.lineWidth = Math.max(1, particle.size / 2);
+      // Rain drop - make it more visible
+      this.ctx.lineWidth = Math.max(2, particle.size);
       this.ctx.beginPath();
       this.ctx.moveTo(0, 0);
+      const length = particle.size * 8;
       this.ctx.lineTo(
-        Math.sin(particle.angle) * particle.size * 5,
-        Math.cos(particle.angle) * particle.size * 5
+        Math.sin(particle.angle) * length,
+        Math.cos(particle.angle) * length
       );
       this.ctx.stroke();
     } else if (particle.shape === 'leaf') {

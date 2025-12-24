@@ -10,6 +10,19 @@
             padding: 0;
             font-family: Arial, sans-serif;
             min-height: 100vh;
+            transition: background-color 0.5s ease;
+        }
+        
+        body.season-winter {
+            background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+        }
+        
+        body.season-rainy {
+            background: linear-gradient(to bottom, #4a5568, #2d3748, #1a202c);
+        }
+        
+        body.season-fall {
+            background: linear-gradient(to bottom, #8b4513, #a0522d, #cd853f);
         }
         
         .controls {
@@ -66,7 +79,8 @@
             z-index: 1;
             padding: 200px 50px;
             text-align: center;
-            color: #333;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .content h1 {
@@ -126,6 +140,11 @@
                 return;
             }
             
+            // Function to update background color based on season
+            function updateBackgroundColor(season) {
+                document.body.className = 'season-' + season;
+            }
+            
             window.startAnimation = function() {
                 try {
                     if (animation) {
@@ -140,6 +159,9 @@
                     const useCustomColor = colorInput.dataset.useCustom === 'true';
                     const color = useCustomColor ? colorInput.value : null;
                     
+                    // Update background color
+                    updateBackgroundColor(season);
+                    
                     animation = new SeasonalAnimation({
                         season: season,
                         quantity: quantity,
@@ -149,7 +171,8 @@
                     });
                     
                     animation.start();
-                    console.log('Animation started:', season, quantity, 'particles');
+                    console.log('Animation started - Season:', season, 'Quantity:', quantity, 'Shape should be:', 
+                        season === 'winter' ? 'circle (snow)' : season === 'rainy' ? 'line (rain)' : 'leaf (fall)');
                 } catch (error) {
                     console.error('Error starting animation:', error);
                     alert('Error: ' + error.message);
@@ -195,10 +218,24 @@
             // Set default color based on season when season changes
             document.getElementById('season').addEventListener('change', function(e) {
                 setDefaultColor(e.target.value);
+                updateBackgroundColor(e.target.value);
+                // Auto-restart animation if it exists (whether running or not)
+                if (animation) {
+                    const wasRunning = animation.isRunning;
+                    animation.destroy();
+                    if (wasRunning) {
+                        // Small delay to ensure cleanup is complete
+                        setTimeout(function() {
+                            window.startAnimation();
+                        }, 50);
+                    }
+                }
             });
             
             // Initialize with default color for current season
-            setDefaultColor(document.getElementById('season').value);
+            const initialSeason = document.getElementById('season').value;
+            setDefaultColor(initialSeason);
+            updateBackgroundColor(initialSeason);
             
             // Update display values
             document.getElementById('quantity').addEventListener('input', function(e) {
